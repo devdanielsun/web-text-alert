@@ -20,15 +20,21 @@ WORKDIR /usr/src/app
 # Copy the Python script into the container
 COPY monitor_webpage.py ./
 
+# Update package list and install necessary system packages
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    chromium-browser \
+    chromium-chromedriver \
+    wget && \
+    rm -rf /var/lib/apt/lists/*
+
 # Install necessary packages
 RUN pip install --no-cache-dir requests selenium webdriver-manager selenium-stealth undetected-chromedriver
 
-# Check Chromium installation path
-RUN which chromium || which google-chrome
-
-# Print the Chromium path in the Docker build logs
-RUN echo "Chromium executable path:" && (which chromium || echo "Chromium not found") && \
-    echo "Chrome executable path:" && (which google-chrome || echo "Google Chrome not found")
+# Check Chromium installation path and log for troubleshooting
+RUN echo "Checking Chromium installation:" && \
+    (which chromium-browser || echo "chromium-browser not found") && \
+    (which google-chrome || echo "google-chrome not found")
 
 # Set environment variables
 ENV LOGIN=${LOGIN}
