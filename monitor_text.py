@@ -4,6 +4,10 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import os
 import requests
+import logging
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
 
 # Set up email configuration (use environment variables for security)
 EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
@@ -17,7 +21,7 @@ URL_TO_CHECK = os.getenv("URL_TO_CHECK")
 TEXT_TO_FIND = os.getenv("TEXT_TO_FIND", "important text")
 
 # Time between every check
-TIME_TO_SLEEP = os.getenv("TIME_TO_SLEEP", 30)
+TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 30))
 
 def send_email():
     """Send an email notification."""
@@ -35,9 +39,10 @@ def send_email():
             server.starttls()
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.sendmail(EMAIL_ADDRESS, TO_EMAIL, msg.as_string())
-        print("Email sent successfully.")
+        logging.info("Email sent successfully.")
     except Exception as e:
-        print(f"Error sending email: {e}")
+        logging.error(f"Error sending email: {e}")
+
 
 def check_text_in_webpage():
     """Check if the text exists on the webpage."""
@@ -46,17 +51,24 @@ def check_text_in_webpage():
         response.raise_for_status()
         return TEXT_TO_FIND in response.text
     except requests.RequestException as e:
-        print(f"Error accessing '{URL_TO_CHECK}': {e}")
+        logging.error(f"Error accessing '{URL_TO_CHECK}': {e}")
         return False
 
+last_email_sent = 0
+cooldown_period = 3600/4 # Cooldown period of 15 minutes in seconds
+
 def main():
+    global last_email_sent
     while True:
+        current_time = time.time()
         if not check_text_in_webpage():
-            print(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'. Sending email.")
-            send_email()
+            logging.warning(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'. Sending email.")
+            if current_time - last_email_sent > cooldown_period:
+                send_email()
+                last_email_sent = current_time
         else:
-            print(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
-        print(f"Checking again in '{TIME_TO_SLEEP}' seconds.")
+            logging.info(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
+        logging.info(f"Checking again in '{TIME_TO_SLEEP}' seconds.")
         time.sleep(TIME_TO_SLEEP)
 
 if __name__ == "__main__":
