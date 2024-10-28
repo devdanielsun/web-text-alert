@@ -11,8 +11,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
+from selenium_stealth import stealth  # Added for stealth capabilities
+import undetected_chromedriver as uc  # Added for undetected-chromedriver
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -65,21 +65,28 @@ def send_email():
     return False
 
 def check_text_in_webpage():
-    """Check if the text exists on the webpage using Selenium."""
-    options = webdriver.ChromeOptions()
+    """Check if the text exists on the webpage using Selenium with undetected-chromedriver."""    options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
 
-    # Set up the WebDriver
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
+    # Use undetected_chromedriver with stealth settings
+    driver = uc.Chrome(options=options)
+    stealth(driver,
+        languages=["en-US", "en"],
+        vendor="Google Inc.",
+        platform="Win32",
+        webgl_vendor="Intel Inc.",
+        renderer="Intel Iris OpenGL Engine",
+        fix_hairline=True,
+    )
+    
     try:
         driver.get(URL_TO_CHECK)
         
         # Wait for the page to load fully
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, 'body'))  # Wait for the body tag to be present
+            EC.presence_of_element_located((By.TAG_NAME, 'body'))
         )
 
         # Check if the text is in the page source
