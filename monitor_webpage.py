@@ -42,9 +42,11 @@ def send_email():
             server.sendmail(EMAIL_ADDRESS, TO_EMAIL, msg.as_string())
         logging.info("Email sent successfully.")
         return True
+    except smtplib.SMTPException as e:
+        logging.error(f"SMTP error occurred: {e}")
     except Exception as e:
         logging.error(f"Error sending email: {e}")
-        return False
+    return False
 
 def check_text_in_webpage():
     """Check if the text exists on the webpage."""
