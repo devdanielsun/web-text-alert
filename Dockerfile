@@ -37,4 +37,4 @@ ENV MAX_TIME_TO_SLEEP=${MAX_TIME_TO_SLEEP}
 ENV DEBUG=${DEBUG}
 
 # Run the monitor script
-CMD ["python", "monitor_webpage.py"]
+# CMD ["python", "monitor_webpage.py"]
