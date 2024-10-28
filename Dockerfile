@@ -17,9 +17,10 @@ ARG DEBUG
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Install necessary system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget \
+# Install necessary packages including Chromium
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    chromium chromium-driver \
     && rm -rf /var/lib/apt/lists/*
 
 # Copy the Python script into the container
