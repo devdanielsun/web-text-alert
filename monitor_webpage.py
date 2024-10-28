@@ -31,7 +31,11 @@ DEBUG = int(os.getenv("DEBUG", 1))
 def send_email():
     global last_email_sent
     """Send an email notification."""
-    subject = "Text Missing Notification"
+
+    current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Update the subject to include the current date and time
+    subject = f"Text Missing Notification - {current_time}"
     body = f"The text '{TEXT_TO_FIND}' is missing from the webpage '{URL_TO_CHECK}'."
 
     msg = MIMEMultipart()
