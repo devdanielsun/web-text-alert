@@ -23,6 +23,13 @@ COPY monitor_webpage.py ./
 # Install necessary packages
 RUN pip install --no-cache-dir requests selenium webdriver-manager selenium-stealth undetected-chromedriver
 
+# Check Chromium installation path
+RUN which chromium || which google-chrome
+
+# Print the Chromium path in the Docker build logs
+RUN echo "Chromium executable path:" && (which chromium || echo "Chromium not found") && \
+    echo "Chrome executable path:" && (which google-chrome || echo "Google Chrome not found")
+
 # Set environment variables
 ENV LOGIN=${LOGIN}
 ENV PASSWORD=${PASSWORD}
@@ -37,4 +44,4 @@ ENV MAX_TIME_TO_SLEEP=${MAX_TIME_TO_SLEEP}
 ENV DEBUG=${DEBUG}
 
 # Run the monitor script
-# CMD ["python", "monitor_webpage.py"]
+CMD ["python", "monitor_webpage.py"]
