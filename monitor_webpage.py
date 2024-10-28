@@ -5,7 +5,7 @@ from email.mime.multipart import MIMEMultipart
 import os
 import requests
 import logging
-from random
+import random
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
