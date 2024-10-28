@@ -42,6 +42,8 @@ def send_email():
             server.sendmail(EMAIL_ADDRESS, TO_EMAIL, msg.as_string())
         logging.info("Email sent successfully.")
         return True
+    except smtplib.SMTPAuthenticationError as e:
+        logging.error(f"Authentication error: {e}")
     except smtplib.SMTPException as e:
         logging.error(f"SMTP error occurred: {e}")
     except Exception as e:
