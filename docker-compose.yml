@@ -2,13 +2,6 @@ services:
   web-text-alert:
     build: .
     container_name: web-text-alert
-    environment:
-      - EMAIL_ADDRESS=your_email@gmail.com
-      - EMAIL_PASSWORD=your_password
-      - TO_EMAIL=recipient_email@gmail.com
-      - SMTP_SERVER=smtp.gmail.com
-      - SMTP_PORT=587
-      - URL_TO_CHECK=https://example.com
-      - TEXT_TO_FIND="important text"
-      - TIME_TO_SLEEP‎=30
+    env_file:
+      - .env
     restart: unless-stopped
