@@ -3,5 +3,5 @@ services:
     build: .
     container_name: web-text-alert
     env_file:
-      - .env
+      - stack.env
     restart: unless-stopped
