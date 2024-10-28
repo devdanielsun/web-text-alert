@@ -26,8 +26,8 @@ RUN apt-get update && \
     curl \
     wget \
     unzip \
-    chromium \
-    chromium-driver \
+    chromium=114.0.5735.90-0ubuntu0.22.04.1 \
+    chromium-driver=114.0.5735.90-0ubuntu0.22.04.1 \
     fonts-liberation \
     libappindicator3-1 \
     libasound2 \
