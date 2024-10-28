@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 import os
 import requests
 import logging
+from random
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -22,7 +23,10 @@ URL_TO_CHECK = os.getenv("URL_TO_CHECK")
 TEXT_TO_FIND = os.getenv("TEXT_TO_FIND", "important text")
 
 # Time between every check
-TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 30))
+MIN_TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 30))
+MAX_TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 60))
+
+DEBUG = int(os.getenv("DEBUG", 1))
 
 def send_email():
     global last_email_sent
@@ -56,6 +60,9 @@ def check_text_in_webpage():
     try:
         response = requests.get(URL_TO_CHECK, timeout=10)
         response.raise_for_status()
+        if DEBUG == 1:
+            logging.info(f"Response status: {response.status_code}")
+            logging.info(f"Response content: {response}")
         return TEXT_TO_FIND in response.text
     except requests.RequestException as e:
         logging.error(f"Error accessing '{URL_TO_CHECK}': {e}")
@@ -81,8 +88,9 @@ def main():
                 logging.info("No email send, cooldown period is active.")
         else:
             logging.info(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
-        logging.info(f"Checking again in '{TIME_TO_SLEEP}' seconds.")
-        time.sleep(TIME_TO_SLEEP)
+        time_sleep = random.randint(MIN_TIME_TO_SLEEP, MAX_TIME_TO_SLEEP)
+        logging.info(f"Checking again in '{time_sleep}' seconds.")
+        time.sleep(time_sleep)
 
 if __name__ == "__main__":
     main()
