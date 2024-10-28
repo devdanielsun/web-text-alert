@@ -10,8 +10,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 
 # Set up email configuration (use environment variables for security)
-EMAIL_ADDRESS = os.getenv("EMAIL_ADDRESS")
-EMAIL_PASSWORD = os.getenv("EMAIL_PASSWORD")
+LOGIN = os.getenv("LOGIN")
+PASSWORD = os.getenv("PASSWORD")
+FROM_EMAIL = os.getenv("FROM_EMAIL")
 TO_EMAIL = os.getenv("TO_EMAIL")
 SMTP_SERVER = os.getenv("SMTP_SERVER", "smtp.gmail.com")
 SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
@@ -30,7 +31,7 @@ def send_email():
     body = f"The text '{TEXT_TO_FIND}' is missing from the webpage '{URL_TO_CHECK}'."
 
     msg = MIMEMultipart()
-    msg['From'] = EMAIL_ADDRESS
+    msg['From'] = FROM_EMAIL
     msg['To'] = TO_EMAIL
     msg['Subject'] = subject
     msg.attach(MIMEText(body, 'plain'))
@@ -38,8 +39,8 @@ def send_email():
     try:
         with smtplib.SMTP(SMTP_SERVER, SMTP_PORT) as server:
             server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
-            server.sendmail(EMAIL_ADDRESS, TO_EMAIL, msg.as_string())
+            server.login(LOGIN, PASSWORD)
+            server.sendmail(FROM_EMAIL, TO_EMAIL, msg.as_string())
         logging.info("Email sent successfully.")
         return True
     except smtplib.SMTPAuthenticationError as e:
