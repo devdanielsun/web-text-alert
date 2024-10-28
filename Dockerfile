@@ -1,6 +1,16 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
+# Define build-time arguments
+ARG EMAIL_ADDRESS
+ARG EMAIL_PASSWORD
+ARG TO_EMAIL
+ARG SMTP_SERVER
+ARG SMTP_PORT
+ARG URL_TO_CHECK
+ARG TEXT_TO_FIND
+ARG TIME_TO_SLEEP
+
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
@@ -11,14 +21,14 @@ COPY monitor_webpage.py ./
 RUN pip install --no-cache-dir requests
 
 # Environment variables
-ENV EMAIL_ADDRESS=your_email@gmail.com
-ENV EMAIL_PASSWORD=your_password
-ENV TO_EMAIL=recipient_email@gmail.com
-ENV SMTP_SERVER=smtp.gmail.com
-ENV SMTP_PORT=587
-ENV URL_TO_CHECK=https://example.com
-ENV TEXT_TO_FIND="important text"
-ENV TIME_TO_SLEEP‎=30
+ENV EMAIL_ADDRESS=${EMAIL_ADDRESS}
+ENV EMAIL_PASSWORD=${EMAIL_PASSWORD}
+ENV TO_EMAIL=${TO_EMAIL}
+ENV SMTP_SERVER=${SMTP_SERVER}
+ENV SMTP_PORT=${SMTP_PORT}
+ENV URL_TO_CHECK=${URL_TO_CHECK}
+ENV TEXT_TO_FIND=${TEXT_TO_FIND}
+ENV TIME_TO_SLEEP=${TIME_TO_SLEEP}
 
 # Run monitor_webpage.py when the container launches
 CMD ["python", "monitor_webpage.py"]
