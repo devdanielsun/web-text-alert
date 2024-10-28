@@ -24,6 +24,7 @@ TEXT_TO_FIND = os.getenv("TEXT_TO_FIND", "important text")
 TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 30))
 
 def send_email():
+    global last_email_sent
     """Send an email notification."""
     subject = "Text Missing Notification"
     body = f"The text '{TEXT_TO_FIND}' is missing from the webpage '{URL_TO_CHECK}'."
@@ -42,6 +43,7 @@ def send_email():
         logging.info("Email sent successfully.")
     except Exception as e:
         logging.error(f"Error sending email: {e}")
+        last_email_sent = 0
 
 
 def check_text_in_webpage():
@@ -62,10 +64,13 @@ def main():
     while True:
         current_time = time.time()
         if not check_text_in_webpage():
-            logging.warning(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'. Sending email.")
+            logging.warning(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'.")
             if current_time - last_email_sent > cooldown_period:
+                logging.info("Sending email.")
                 send_email()
                 last_email_sent = current_time
+            else:
+                logging.info("No email send, cooldown period is active.")
         else:
             logging.info(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
         logging.info(f"Checking again in '{TIME_TO_SLEEP}' seconds.")
