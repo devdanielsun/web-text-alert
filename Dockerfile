@@ -21,7 +21,13 @@ WORKDIR /usr/src/app
 COPY monitor_webpage.py ./
 
 # Install necessary packages
-RUN pip install --no-cache-dir requests
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    curl \
+    wget \
+    unzip \
+    && pip install --no-cache-dir requests selenium webdriver-manager \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Environment variables
 ENV LOGIN=${LOGIN}
