@@ -7,6 +7,7 @@ import requests
 import logging
 import random
 from datetime import datetime
+from selenium import webdriver
 import undetected_chromedriver as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -63,13 +64,16 @@ def send_email():
     return False
 
 def check_text_in_webpage():
-    """Check if the text exists on the webpage using undetected-chromedriver."""
-    options = uc.ChromeOptions()
+    """Check if the text exists on the webpage using Selenium."""
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     
-    # Use undetected_chromedriver with stealth settings
+    # Set the path to the Chrome binary
+    options.binary_location = "/usr/bin/chromium"  # Adjust this path if necessary
+
+    # Set up the WebDriver
     driver = uc.Chrome(options=options)
     
     try:
@@ -77,7 +81,7 @@ def check_text_in_webpage():
         
         # Wait for the page to load fully
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, 'body'))
+            EC.presence_of_element_located((By.TAG_NAME, 'body'))  # Wait for the body tag to be present
         )
 
         # Check if the text is in the page source
