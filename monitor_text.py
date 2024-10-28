@@ -16,6 +16,9 @@ SMTP_PORT = int(os.getenv("SMTP_PORT", 587))
 URL_TO_CHECK = os.getenv("URL_TO_CHECK")
 TEXT_TO_FIND = os.getenv("TEXT_TO_FIND", "important text")
 
+# Time between every check
+TIME_TO_SLEEP = os.getenv("TIME_TO_SLEEP", 30)
+
 def send_email():
     """Send an email notification."""
     subject = "Text Missing Notification"
@@ -51,9 +54,10 @@ def main():
         if not check_text_in_webpage():
             print(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'. Sending email.")
             send_email()
-            break
-        print(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'. Checking again in 30 seconds.")
-        time.sleep(30)
+        else:
+            print(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
+        print(f"Checking again in '{TIME_TO_SLEEP}' seconds.")
+        time.sleep(TIME_TO_SLEEP)
 
 if __name__ == "__main__":
     main()
