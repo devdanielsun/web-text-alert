@@ -65,7 +65,8 @@ def send_email():
     return False
 
 def check_text_in_webpage():
-    """Check if the text exists on the webpage using Selenium with undetected-chromedriver."""    options = webdriver.ChromeOptions()
+    """Check if the text exists on the webpage using Selenium with undetected-chromedriver."""
+    options = webdriver.ChromeOptions()
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
