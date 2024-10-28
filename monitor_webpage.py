@@ -70,17 +70,10 @@ def check_text_in_webpage():
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-
+    options.binary_location = "/usr/bin/chromium"  # Ensure the binary path is correct
+    
     # Use undetected_chromedriver with stealth settings
     driver = uc.Chrome(options=options)
-    stealth(driver,
-        languages=["en-US", "en"],
-        vendor="Google Inc.",
-        platform="Win32",
-        webgl_vendor="Intel Inc.",
-        renderer="Intel Iris OpenGL Engine",
-        fix_hairline=True,
-    )
     
     try:
         driver.get(URL_TO_CHECK)
