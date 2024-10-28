@@ -12,4 +12,5 @@ services:
       - SMTP_PORT=587
       - URL_TO_CHECK=https://example.com
       - TEXT_TO_FIND="important text"
+      - TIME_TO_SLEEP‎=30
     restart: unless-stopped
