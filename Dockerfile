@@ -17,19 +17,16 @@ ARG DEBUG
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
+# Install necessary system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    wget \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy the Python script into the container
 COPY monitor_webpage.py ./
 
-# Update package list and install necessary system packages
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-    chromium-browser \
-    chromium-chromedriver \
-    wget && \
-    rm -rf /var/lib/apt/lists/*
-
-# Install necessary packages
-RUN pip install --no-cache-dir requests selenium webdriver-manager selenium-stealth undetected-chromedriver
+# Install Python packages
+RUN pip install --no-cache-dir requests selenium webdriver-manager undetected-chromedriver
 
 # Check Chromium installation path and log for troubleshooting
 RUN echo "Checking Chromium installation:" && \
