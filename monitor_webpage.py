@@ -7,6 +7,12 @@ import requests
 import logging
 import random
 from datetime import datetime
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -30,9 +36,7 @@ MAX_TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 60))
 DEBUG = int(os.getenv("DEBUG", 1))
 
 def send_email():
-    global last_email_sent
     """Send an email notification."""
-
     current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     
     # Update the subject to include the current date and time
@@ -61,20 +65,34 @@ def send_email():
     return False
 
 def check_text_in_webpage():
-    """Check if the text exists on the webpage."""
+    """Check if the text exists on the webpage using Selenium."""
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')  # Run headless Chrome
+    options.add_argument('--no-sandbox')
+    options.add_argument('--disable-dev-shm-usage')
+
+    # Set up the WebDriver
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
+
     try:
-        response = requests.get(URL_TO_CHECK, timeout=10)
-        response.raise_for_status()
-        if DEBUG == 1:
-            logging.info(f"Response status: {response.status_code}")
-            logging.info(f"Response content: {response}")
-        return TEXT_TO_FIND in response.text
-    except requests.RequestException as e:
+        driver.get(URL_TO_CHECK)
+        
+        # Wait for the page to load fully
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, 'body'))  # Wait for the body tag to be present
+        )
+
+        # Check if the text is in the page source
+        page_source = driver.page_source
+        return TEXT_TO_FIND in page_source
+    except Exception as e:
         logging.error(f"Error accessing '{URL_TO_CHECK}': {e}")
         return False
+    finally:
+        driver.quit()
 
 last_email_sent = 0
-cooldown_period = 3600/4 # Cooldown period of 15 minutes in seconds
+cooldown_period = 3600 / 4  # Cooldown period of 15 minutes in seconds
 
 def main():
     global last_email_sent
@@ -90,7 +108,7 @@ def main():
                 else:
                     last_email_sent = 0
             else:
-                logging.info("No email send, cooldown period is active.")
+                logging.info("No email sent, cooldown period is active.")
         else:
             logging.info(f"'{TEXT_TO_FIND}' found on '{URL_TO_CHECK}'.")
         time_sleep = random.randint(MIN_TIME_TO_SLEEP, MAX_TIME_TO_SLEEP)
