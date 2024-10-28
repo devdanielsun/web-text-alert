@@ -7,12 +7,10 @@ import requests
 import logging
 import random
 from datetime import datetime
-from selenium import webdriver
+import undetected_chromedriver.v2 as uc
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium_stealth import stealth  # Added for stealth capabilities
-import undetected_chromedriver as uc  # Added for undetected-chromedriver
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -65,12 +63,11 @@ def send_email():
     return False
 
 def check_text_in_webpage():
-    """Check if the text exists on the webpage using Selenium with undetected-chromedriver."""
-    options = webdriver.ChromeOptions()
+    """Check if the text exists on the webpage using undetected-chromedriver."""
+    options = uc.ChromeOptions()
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
-    options.binary_location = "/usr/bin/chromium"  # Ensure the binary path is correct
     
     # Use undetected_chromedriver with stealth settings
     driver = uc.Chrome(options=options)
