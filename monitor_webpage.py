@@ -41,10 +41,10 @@ def send_email():
             server.login(EMAIL_ADDRESS, EMAIL_PASSWORD)
             server.sendmail(EMAIL_ADDRESS, TO_EMAIL, msg.as_string())
         logging.info("Email sent successfully.")
+        return True
     except Exception as e:
         logging.error(f"Error sending email: {e}")
-        last_email_sent = 0
-
+        return False
 
 def check_text_in_webpage():
     """Check if the text exists on the webpage."""
@@ -67,8 +67,11 @@ def main():
             logging.warning(f"'{TEXT_TO_FIND}' not found on '{URL_TO_CHECK}'.")
             if current_time - last_email_sent > cooldown_period:
                 logging.info("Sending email.")
-                send_email()
-                last_email_sent = current_time
+                success = send_email()
+                if success:
+                    last_email_sent = current_time
+                else:
+                    last_email_sent = 0
             else:
                 logging.info("No email send, cooldown period is active.")
         else:
