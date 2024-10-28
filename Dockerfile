@@ -1,7 +1,7 @@
 # Use an official Python runtime as a parent image
 FROM python:3.9-slim
 
-# Define build-time arguments
+# Define build-time arguments for environment variables
 ARG LOGIN
 ARG PASSWORD
 ARG FROM_EMAIL
@@ -17,37 +17,21 @@ ARG DEBUG
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy the current directory contents into the container at /usr/src/app
+# Copy the Python script into the container
 COPY monitor_webpage.py ./
 
 # Install necessary packages
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    curl \
-    wget \
-    unzip \
-    chromium=114.0.5735.90-0ubuntu0.22.04.1 \
-    chromium-driver=114.0.5735.90-0ubuntu0.22.04.1 \
-    fonts-liberation \
-    libappindicator3-1 \
-    libasound2 \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf2.0-0 \
-    libgtk-3-0 \
-    libnspr4 \
-    libnss3 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    x11-apps \
-    && pip install --no-cache-dir requests selenium webdriver-manager \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+    curl wget unzip chromium chromium-driver fonts-liberation \
+    libappindicator3-1 libasound2 libatk-bridge2.0-0 libatk1.0-0 libcups2 \
+    libdbus-1-3 libgdk-pixbuf2.0-0 libgtk-3-0 libnspr4 libnss3 libx11-xcb1 \
+    libxcomposite1 libxdamage1 libxrandr2 x11-apps && \
+    pip install --no-cache-dir requests selenium webdriver-manager && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Environment variables
+# Set environment variables
 ENV LOGIN=${LOGIN}
 ENV PASSWORD=${PASSWORD}
 ENV FROM_EMAIL=${FROM_EMAIL}
@@ -60,5 +44,5 @@ ENV MIN_TIME_TO_SLEEP=${MIN_TIME_TO_SLEEP}
 ENV MAX_TIME_TO_SLEEP=${MAX_TIME_TO_SLEEP}
 ENV DEBUG=${DEBUG}
 
-# Run monitor_webpage.py when the container launches
+# Run the monitor script
 CMD ["python", "monitor_webpage.py"]
