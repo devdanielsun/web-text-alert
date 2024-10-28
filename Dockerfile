@@ -18,6 +18,7 @@ ENV SMTP_SERVER=smtp.gmail.com
 ENV SMTP_PORT=587
 ENV URL_TO_CHECK=https://example.com
 ENV TEXT_TO_FIND="important text"
+ENV TIME_TO_SLEEP‎=30
 
 # Run monitor_webpage.py when the container launches
 CMD ["python", "./monitor_webpage.py"]
