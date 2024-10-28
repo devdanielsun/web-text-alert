@@ -5,7 +5,7 @@ FROM python:3.9-slim
 WORKDIR /usr/src/app
 
 # Copy the current directory contents into the container at /usr/src/app
-COPY . .
+COPY monitor_webpage.py ./
 
 # Install necessary packages
 RUN pip install --no-cache-dir requests
