@@ -21,4 +21,4 @@ ENV TEXT_TO_FIND="important text"
 ENV TIME_TO_SLEEP‎=30
 
 # Run monitor_webpage.py when the container launches
-CMD ["python", "./monitor_webpage.py"]
+CMD ["python", "monitor_webpage.py"]
