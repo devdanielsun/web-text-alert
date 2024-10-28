@@ -29,8 +29,8 @@ URL_TO_CHECK = os.getenv("URL_TO_CHECK")
 TEXT_TO_FIND = os.getenv("TEXT_TO_FIND", "important text")
 
 # Time between every check
-MIN_TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 30))
-MAX_TIME_TO_SLEEP = int(os.getenv("TIME_TO_SLEEP", 60))
+MIN_TIME_TO_SLEEP = int(os.getenv("MIN_TIME_TO_SLEEP", 30))  # Fixed env var names
+MAX_TIME_TO_SLEEP = int(os.getenv("MAX_TIME_TO_SLEEP", 60))
 
 DEBUG = int(os.getenv("DEBUG", 1))
 
@@ -65,21 +65,21 @@ def send_email():
 
 def check_text_in_webpage():
     """Check if the text exists on the webpage using Selenium."""
-    options = webdriver.ChromeOptions()
+    options = uc.ChromeOptions()
     options.add_argument('--headless')  # Run headless Chrome
     options.add_argument('--no-sandbox')
     options.add_argument('--disable-dev-shm-usage')
     
-    # Set the path to the Chrome binary
-    options.binary_location = "/usr/bin/chromium"  # Adjust this path if necessary
+    # Set a custom User-Agent to mimic a real browser
+    options.add_argument("user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/89.0.4389.82 Safari/537.36")
 
     # Set up the WebDriver
     driver = uc.Chrome(options=options)
-    
+
     try:
         driver.get(URL_TO_CHECK)
         
-        # Wait for the page to load fully
+        # Wait for the page to load fully by waiting for a specific element
         WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.TAG_NAME, 'body'))  # Wait for the body tag to be present
         )
